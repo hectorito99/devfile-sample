@@ -1,82 +1,26 @@
-const Prometheus = require('prom-client')
 const express = require('express');
-const http = require('http');
-
-Prometheus.collectDefaultMetrics();
-
-const requestHistogram = new Prometheus.Histogram({
-    name: 'http_request_duration_seconds',
-    help: 'Duration of HTTP requests in seconds',
-    labelNames: ['code', 'handler', 'method'],
-    buckets: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5]
-})
-
-const requestTimer = (req, res, next) => {
-  const path = new URL(req.url, `http://${req.hostname}`).pathname
-  const stop = requestHistogram.startTimer({
-    method: req.method,
-    handler: path
-  })
-  res.on('finish', () => {
-    stop({
-      code: res.statusCode
-    })
-  })
-  next()
-}
+const cors = require('cors');
+const path = require('path');
 
 const app = express();
-const server = http.createServer(app)
-
-// See: http://expressjs.com/en/4x/api.html#app.settings.table
-const PRODUCTION = app.get('env') === 'production';
-
-// Administrative routes are not timed or logged, but for non-admin routes, pino
-// overhead is included in timing.
-app.get('/ready', (req, res) => res.status(200).json({status:"ok"}));
-app.get('/live', (req, res) => res.status(200).json({status:"ok"}));
-app.get('/metrics', async (req, res, next) => {
-  const metrics = await Prometheus.register.metrics();
-  res.set('Content-Type', Prometheus.register.contentType)
-  res.end(metrics);
-})
-
-// Time routes after here.
-app.use(requestTimer);
-
-// Log routes after here.
-const pino = require('pino')({
-  level: PRODUCTION ? 'info' : 'debug',
-});
-app.use(require('pino-http')({logger: pino}));
-
-app.get('/', (req, res) => {
-  res.send(`
-    <html>
-      <head>
-        <title>Mi Aplicación Node.js</title>
-        <style>
-          body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-          h1 { color: #007bff; }
-          p { font-size: 18px; }
-        </style>
-      </head>
-      <body>
-        <h1>Bienvenido a Mi Aplicación en Node.js</h1>
-        <p>Esta es una aplicación con Express y Prometheus.</p>
-        <a href="/metrics">Ver métricas</a>
-      </body>
-    </html>
-  `);
-});
-
-
-app.get('*', (req, res) => {
-  res.status(404).send("Not Found");
-});
-
-// Listen and serve.
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log(`App started on PORT ${PORT}`);
+
+app.use(cors());
+app.use(express.json());
+
+// API para React
+app.get('/api/mensaje', (req, res) => {
+  res.json({ mensaje: "¡Hola desde el backend en Node.js en OpenShift!" });
+});
+
+// Servir el frontend desde la carpeta build
+app.use(express.static(path.join(__dirname, 'frontend', 'dist')));
+
+// Todas las rutas que no sean API deben devolver el index.html de React
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend', 'dist', 'index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en puerto ${PORT}`);
 });
