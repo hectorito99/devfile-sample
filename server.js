@@ -51,10 +51,25 @@ const pino = require('pino')({
 app.use(require('pino-http')({logger: pino}));
 
 app.get('/', (req, res) => {
-  // Use req.log (a `pino` instance) to log JSON:
-  req.log.info({message: 'Esta es mi aplicacion en Node!!'});
-  res.send('Esta es mi aplicacion en Node!!');
+  res.send(`
+    <html>
+      <head>
+        <title>Mi Aplicación Node.js</title>
+        <style>
+          body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+          h1 { color: #007bff; }
+          p { font-size: 18px; }
+        </style>
+      </head>
+      <body>
+        <h1>Bienvenido a Mi Aplicación en Node.js</h1>
+        <p>Esta es una aplicación con Express y Prometheus.</p>
+        <a href="/metrics">Ver métricas</a>
+      </body>
+    </html>
+  `);
 });
+
 
 app.get('*', (req, res) => {
   res.status(404).send("Not Found");
