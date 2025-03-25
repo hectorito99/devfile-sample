@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import ProfileSidebar from './components/Profile';
 
 function App() {
   const [mensaje, setMensaje] = useState("");
@@ -12,9 +13,12 @@ function App() {
   }, []);
 
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
-      <h1>Mi Aplicación en React + Node.js</h1>
-      <p>{mensaje}</p>
+    <div>
+      <ProfileSidebar />
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <h1>Mi Aplicación en React + Node.js</h1>
+        <p>{mensaje}</p>
+      </div>
     </div>
   );
 }
