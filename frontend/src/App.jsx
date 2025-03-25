@@ -16,7 +16,7 @@ function App() {
     <div>
       <ProfileSidebar />
       <div style={{ textAlign: "center", padding: "20px" }}>
-        <h1>Mi Aplicación en React + Node.js</h1>
+        <h1>Mi portfolio Web!</h1>
         <p>{mensaje}</p>
       </div>
     </div>

@@ -8,10 +8,10 @@ const ProfileSidebar = () => {
         <img src="https://via.placeholder.com/150" alt="Foto de perfil" />
       </div>
       <div className="profile-info">
-        <h2>Nombre Apellido</h2>
-        <p className="title">Desarrollador Web</p>
+        <h2>Héctor Martín Martín</h2>
+        <p className="title">DevOps</p>
         <p className="contact-info">
-          <strong>Teléfono:</strong> (123) 456-7890
+          <strong>Teléfono:</strong> 994939439
         </p>
         <p className="contact-info">
           <strong>Email:</strong> ejemplo@correo.com
